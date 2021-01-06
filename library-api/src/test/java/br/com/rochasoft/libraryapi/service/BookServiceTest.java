@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.times;
+
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class BookServiceTest
@@ -149,7 +151,7 @@ public class BookServiceTest
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> service.delete(book));
 
         // verificação
-        Mockito.verify(repository, Mockito.times(1)).delete(book);
+        Mockito.verify(repository, times(1)).delete(book);
 
     }
 
@@ -233,6 +235,26 @@ public class BookServiceTest
         Assertions.assertThat(results.getContent()).isEqualTo(lista);
         Assertions.assertThat(results.getPageable().getPageNumber()).isEqualTo(0);
         Assertions.assertThat(results.getPageable().getPageSize()).isEqualTo(10);
+
+    }
+
+    @Test
+    @DisplayName("Deve obter um livro pelo isbn")
+    public void getBookByIsbn()
+    {
+
+        String isbn = "1230";
+
+        // simula que o serviço irá retornar o livro
+        Mockito.when(repository.findByIsbn(isbn)).thenReturn(Optional.of(Book.builder().id(11).isbn("1230").build()));
+
+        Optional<Book> book = service.getBookByIsbn(isbn);
+
+        Assertions.assertThat(book.isPresent()).isTrue();
+        Assertions.assertThat(book.get().getId()).isEqualTo(11);
+        Assertions.assertThat(book.get().getIsbn()).isEqualTo(isbn);
+        Mockito.verify(repository, times(1)).findByIsbn(isbn);
+
 
     }
 
