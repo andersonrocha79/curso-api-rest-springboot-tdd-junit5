@@ -1,4 +1,4 @@
-package br.com.rochasoft.libraryapi.service.EmailService;
+package br.com.rochasoft.libraryapi.service;
 
 import java.util.List;
 
@@ -7,5 +7,6 @@ import java.util.List;
 public interface EmailService
 {
 
-    void sendMails(String mensagem, List<String> mailsList);
+    void sendMails(String assunto, String mensagem, List<String> mailsList);
+
 }

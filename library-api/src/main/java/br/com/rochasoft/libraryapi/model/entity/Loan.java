@@ -27,6 +27,9 @@ public class Loan
     @NotNull
     private String customer;
 
+    @Column(name = "customer_email")
+    private String customerEmail;
+
     @JoinColumn(name = "id_book")
     @ManyToOne          // muitos empréstimos para o mesmo livro
     private Book book;

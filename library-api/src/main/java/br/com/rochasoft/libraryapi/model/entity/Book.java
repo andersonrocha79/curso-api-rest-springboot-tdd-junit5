@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -30,6 +31,9 @@ public class Book
 
     @Column
     private String isbn;
+
+    @OneToMany( mappedBy = "book", fetch = FetchType.LAZY) // EAGER-busca todos automaticamente // o livro tem o relacionamento de um para muitos com a entidade 'loans'
+    private List<Loan> loans;
 
 
 }
