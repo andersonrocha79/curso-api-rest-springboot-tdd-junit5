@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 
 // https://docs.spring.io/spring-integration/docs/current/reference/html/index.html
+// https://swagger.io/
+// monitoramento > localhost:8080/actuator
+// arquivo de log > http://localhost:8080/actuator/logfile
 
 @SpringBootApplication
 @EnableScheduling			// habilita o agendamento de tarefas

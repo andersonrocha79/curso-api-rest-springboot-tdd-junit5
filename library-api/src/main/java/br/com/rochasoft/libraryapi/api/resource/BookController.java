@@ -4,9 +4,16 @@ import br.com.rochasoft.libraryapi.api.dto.BookDTO;
 import br.com.rochasoft.libraryapi.api.dto.LoanDTO;
 import br.com.rochasoft.libraryapi.model.entity.Book;
 import br.com.rochasoft.libraryapi.model.entity.Loan;
+import br.com.rochasoft.libraryapi.model.repository.LoanRepository;
 import br.com.rochasoft.libraryapi.service.BookService;
 import br.com.rochasoft.libraryapi.service.LoanService;
+import br.com.rochasoft.libraryapi.service.impl.LoanServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,18 +28,31 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@Api("Book API")
+@Slf4j // faz com a compilação da classe receba um objeto de log
 public class BookController
 {
 
-    private final BookService service;
-    private final ModelMapper modelMapper;
-    private final LoanService loanService;
+    private BookService service;
+    private LoanService loanService;
+    private ModelMapper modelMapper;
+
+    public BookController(BookService service, LoanService lService, ModelMapper modelMapper)
+    {
+        this.service = service;
+        this.loanService = lService;
+        this.modelMapper = modelMapper;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("inclui um livro")
     public BookDTO create(@RequestBody @Valid BookDTO dto)
     {
+
+        // @Slf4j
+        log.info("criou um livro para o isbn {}", dto.getIsbn());
 
         final Book entity = modelMapper.map(dto, Book.class);
 
@@ -44,8 +64,12 @@ public class BookController
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("busca os dados do livro por 'id'")
     public BookDTO get(@PathVariable long id)
     {
+
+        log.info("buscou os dados do livro pelo id {}", id);
+
         return service
                 .getById(id)
                 .map(book -> modelMapper.map(book, BookDTO.class))
@@ -55,8 +79,14 @@ public class BookController
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Exclui o livro por 'id'")
+    @ApiResponses({ @ApiResponse(code = 204, message="Livro excluído com sucesso."),
+                    @ApiResponse(code = 401, message="Não autorizado.")})
     public void delete(@PathVariable long id)
     {
+
+        log.info("excluiu os dados do livro id {}", id);
+
         Book book = service
                 .getById(id)
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -65,8 +95,11 @@ public class BookController
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Atualiza os dados de um livro por 'id'")
     public BookDTO update( @PathVariable long id, BookDTO dto)
     {
+
+        log.info("atualizou os dados do livro id {}", id);
 
         // busca o livro
         return service
@@ -89,8 +122,11 @@ public class BookController
     }
 
     @GetMapping
+    @ApiOperation("Retorna a lista de livros cadastrados")
     public Page<BookDTO> find(BookDTO dto, Pageable pageRequest)
     {
+
+        log.info("retornou a lista de livros {}", dto);
 
         Book filter = modelMapper.map(dto, Book.class);
         Page<Book> result = service.find(filter, pageRequest);
@@ -109,9 +145,11 @@ public class BookController
     public Page<LoanDTO> loansByBook(@PathVariable Long id, Pageable pageable)
     {
 
+        log.info("retornou a lista de empréstimos do livro id {}", id);
+
         Book book = service.getById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Page<Loan> result = loanService.getLoansByBook(book, pageable);
+        Page<Loan> result =  loanService.getLoansByBook(book, pageable);
 
         List<LoanDTO> list =  result.getContent()
                              .stream() // gera um 'stream'

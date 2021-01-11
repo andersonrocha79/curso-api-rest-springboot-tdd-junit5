@@ -16,7 +16,7 @@ public class ScheduleService
 
     // segundo, minuto, hora, dia, mes, ano
     // http://www.cronmaker.com/
-    private static final String CRON_LATE_LOANS = "0 0 0 1/1 * ?";
+    private static final String CRON_LATE_LOANS = "0 0 13 1/1 * ?"; // executa todos os dias as 13:00
 
     private final LoanService   loanService;
     private final EmailService  emailService;

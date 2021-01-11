@@ -8,6 +8,8 @@ import br.com.rochasoft.libraryapi.model.entity.Book;
 import br.com.rochasoft.libraryapi.model.entity.Loan;
 import br.com.rochasoft.libraryapi.service.BookService;
 import br.com.rochasoft.libraryapi.service.LoanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/loans")
 @RequiredArgsConstructor
+@Api("Loan API")
 public class LoanController
 {
 
@@ -33,6 +36,7 @@ public class LoanController
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("inclui um novo empréstimo de um livro")
     public long create(@RequestBody LoanDTO dto)
     {
 
@@ -53,6 +57,7 @@ public class LoanController
     }
 
     @PatchMapping("{id}")
+    @ApiOperation("Registra a devolução de um livro emprestado")
     public void returnBook(@PathVariable Long id, @RequestBody ReturnedLoanDTO dto)
     {
 
@@ -65,6 +70,7 @@ public class LoanController
     }
 
     @GetMapping
+    @ApiOperation("Retorna o histórico de empréstimos de um livro")
     public Page<LoanDTO> find(LoanFilterDTO dto, Pageable pageRequest)
     {
 
